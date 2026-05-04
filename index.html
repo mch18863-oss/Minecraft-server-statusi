@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Server Status</title>
+
+<style>
+    body {
+        background: #0f172a;
+        color: #e2e8f0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .card {
+        background: #1e293b;
+        padding: 20px;
+        border-radius: 15px;
+        max-width: 350px;
+        margin: auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    .status {
+        font-size: 20px;
+        margin: 10px 0;
+    }
+
+    .online { color: #22c55e; }
+    .offline { color: #ef4444; }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 8px;
+        background: #3b82f6;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h1>Server Status</h1>
+    <p><strong>IP:</strong> play.akmcofficial.in</p>
+
+    <div id="status" class="status">Checking...</div>
+    <div id="players"></div>
+    <div id="version"></div>
+
+    <button onclick="getStatus()">Refresh</button>
+</div>
+
+<script>
+async function getStatus() {
+    const statusEl = document.getElementById("status");
+    const playersEl = document.getElementById("players");
+    const versionEl = document.getElementById("version");
+
+    statusEl.innerHTML = "Checking...";
+    statusEl.className = "status";
+
+    try {
+        const res = await fetch("https://api.mcsrvstat.us/2/play.akmcofficial.in");
+        const data = await res.json();
+
+        if (data.online) {
+            statusEl.innerHTML = "🟢 Online";
+            statusEl.classList.add("online");
+
+            playersEl.innerHTML = `Players: ${data.players.online} / ${data.players.max}`;
+            versionEl.innerHTML = `Version: ${data.version}`;
+        } else {
+            statusEl.innerHTML = "🔴 Offline";
+            statusEl.classList.add("offline");
+
+            playersEl.innerHTML = "";
+            versionEl.innerHTML = "";
+        }
+
+    } catch (err) {
+        statusEl.innerHTML = "Error fetching status";
+        statusEl.classList.add("offline");
+    }
+}
+
+getStatus();
+</script>
+
+</body>
+</html>
